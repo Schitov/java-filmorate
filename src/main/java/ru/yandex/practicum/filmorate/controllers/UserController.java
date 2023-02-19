@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidException;
 import ru.yandex.practicum.filmorate.model.User;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -20,6 +21,8 @@ public class UserController {
     public User addUser(@Valid @RequestBody User user) {
         log.info("add user {}", user.toString());
         checkAndFillUserName(user);
+        checkSpaces(user);
+        checkBirthday(user);
         user.setId(generatorId());
         users.put(user.getId(), user);
         return user;
@@ -36,6 +39,8 @@ public class UserController {
         log.info("update user {}", user);
         checkUserInUsers(user);
         checkAndFillUserName(user);
+        checkSpaces(user);
+        checkBirthday(user);
         users.replace(user.getId(), user);
         return user;
     }
@@ -49,6 +54,18 @@ public class UserController {
     private void checkUserInUsers(User user) {
         if (!users.containsKey(user.getId())) {
             throw new ValidException("User with number is not existed");
+        }
+    }
+
+    private void checkSpaces(User user) {
+        if (user.getLogin().contains(" ")) {
+            throw new ValidException("Login musn't contain spaces");
+        }
+    }
+
+    private void checkBirthday(User user) {
+        if(!user.getBirthday().isBefore(LocalDate.now())) {
+            throw new ValidException("This birthday is not existed");
         }
     }
 
