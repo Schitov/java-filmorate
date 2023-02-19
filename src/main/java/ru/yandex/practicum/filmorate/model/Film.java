@@ -16,7 +16,6 @@ import java.time.LocalDate;
 @ToString
 public class Film extends Item {
     @NotNull(message = "Name must be filled")
-    @NotEmpty
     @NotBlank(message = "Name must be filled")
     private String name;
     @Size(max = 200, message = "Value of description must be no more than 200 chars")
