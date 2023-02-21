@@ -2,11 +2,13 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.ValidException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.validators.ModelValidator;
 
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -14,16 +16,18 @@ import java.util.HashMap;
 @RestController
 @RequestMapping("/users")
 public class UserController {
+    @Autowired
+    private ModelValidator userValidator;
     HashMap<Integer, User> users = new HashMap<>();
     private int id = 0;
 
     @PostMapping()
     public User addUser(@Valid @RequestBody User user) {
         log.info("add user {}", user.toString());
-        checkAndFillUserName(user);
-        checkSpaces(user);
-        checkBirthday(user);
+        Errors errors = new BeanPropertyBindingResult(user, "film");
+        userValidator.validate(user, errors);
         user.setId(generatorId());
+        user.setName(user.getName() == null || user.getName().isBlank() ? user.getLogin() : user.getName());
         users.put(user.getId(), user);
         return user;
     }
@@ -37,36 +41,12 @@ public class UserController {
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
         log.info("update user {}", user);
-        checkUserInUsers(user);
-        checkAndFillUserName(user);
-        checkSpaces(user);
-        checkBirthday(user);
+        Errors errors = new BeanPropertyBindingResult(user, "film");
+        userValidator.validate(user, errors);
+        userValidator.presentUserValidate(user, users);
+        user.setName(user.getName() == null || user.getName().isBlank() ? user.getLogin() : user.getName());
         users.replace(user.getId(), user);
         return user;
-    }
-
-    private void checkAndFillUserName(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-    }
-
-    private void checkUserInUsers(User user) {
-        if (!users.containsKey(user.getId())) {
-            throw new ValidException("User with number is not existed");
-        }
-    }
-
-    private void checkSpaces(User user) {
-        if (user.getLogin().contains(" ")) {
-            throw new ValidException("Login musn't contain spaces");
-        }
-    }
-
-    private void checkBirthday(User user) {
-        if(!user.getBirthday().isBefore(LocalDate.now())) {
-            throw new ValidException("This birthday is not existed");
-        }
     }
 
     private int generatorId() {

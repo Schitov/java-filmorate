@@ -11,7 +11,8 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @ToString
-public class User extends Item {
+public class User {
+    int id;
     @Email
     private String email;
     @NotNull
