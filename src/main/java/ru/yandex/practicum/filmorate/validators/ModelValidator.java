@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.validators;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import ru.yandex.practicum.filmorate.exceptions.ExistenceOfObject;
 import ru.yandex.practicum.filmorate.exceptions.ValidException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
@@ -37,7 +38,7 @@ public class ModelValidator implements Validator {
         Film film = (Film) o;
 
         if (!films.containsKey(film.getId())) {
-            throw new ValidException("Film is not existed in our library");
+            throw new ExistenceOfObject("Film is not existed in our library");
         }
     }
 
@@ -71,8 +72,20 @@ public class ModelValidator implements Validator {
     public void presentUserValidate(Object o, HashMap<Integer, User> users) {
         User user = (User) o;
         if (!users.containsKey(user.getId())) {
-            throw new ValidException("User with number is not existed");
+            throw new ExistenceOfObject("User with number" + user.getId() + " is not existed");
         }
     }
 
+    public void presentUserValidateById(int id, HashMap<Integer, User> users) {
+        if (!users.containsKey(id)) {
+            throw new ExistenceOfObject("User with number" + id + " is not existed");
+        }
+    }
+
+    public void presentFilmValidateById(int id, HashMap<Integer, Film> films) {
+
+        if (!films.containsKey(id)) {
+            throw new ExistenceOfObject("Film is not existed in our library");
+        }
+    }
 }
