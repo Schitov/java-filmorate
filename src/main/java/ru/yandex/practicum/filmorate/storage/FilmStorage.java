@@ -14,6 +14,10 @@ public class FilmStorage implements InMemoryFilmStorage {
     private int id = 0;
     HashMap<Integer, Film> films = new HashMap<>();
 
+    public void clear() {
+        films.clear();
+    }
+
     @Override
     public HashMap<Integer, Film> getFilms() {
         return films;

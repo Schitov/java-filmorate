@@ -14,6 +14,10 @@ public class UserStorage implements InMemoryUserStorage {
     HashMap<Integer, User> users = new HashMap<>();
     private int id = 0;
 
+    public void clear() {
+        users.clear();
+    }
+
     @Override
     public User getUser(Long id) {
         return users.get(id.intValue());

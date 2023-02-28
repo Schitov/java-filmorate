@@ -61,4 +61,8 @@ public class UserController {
                                        @PathVariable("otherId") Long otherId) {
         return userService.showCommonFriends(userId, otherId);
     }
+
+    public void clear() {
+        userService.clear();
+    }
 }
