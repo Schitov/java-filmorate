@@ -55,8 +55,4 @@ public class FilmController {
     public List<Film> getFilmPopularity(@RequestParam(defaultValue = "10") int count) {
         return filmService.showSortedFilms(count);
     }
-
-    public void clear() {
-        filmService.clear();
-    }
 }

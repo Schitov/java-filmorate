@@ -26,5 +26,4 @@ public interface InMemoryUserStorage {
     public List<User> showCommonFriends(Long userId, Long otherId);
 
     public HashMap<Integer, User> getUsers();
-    public void clear();
 }

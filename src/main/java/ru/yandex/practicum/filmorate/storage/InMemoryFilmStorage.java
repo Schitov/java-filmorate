@@ -26,6 +26,5 @@ public interface InMemoryFilmStorage {
     public Set<Long> removeLikeFromFilm(Optional<Integer> idFilm, Optional<Long> idUser);
 
     public List<Film> showFilteredTopFilms(int count);
-    public void clear();
 
 }

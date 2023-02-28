@@ -31,10 +31,6 @@ public class UserService {
         return inMemoryUserStorage.showUsers();
     }
 
-    public void clear() {
-        inMemoryUserStorage.clear();
-    }
-
     public User getUser(Long id) {
         if (checkPresenceAndPositiveOfValue(id)) {
             userValidator.presentUserValidateById(id.intValue(), inMemoryUserStorage.getUsers());

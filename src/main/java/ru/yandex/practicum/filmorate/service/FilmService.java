@@ -35,10 +35,6 @@ public class FilmService {
         this.inMemoryUserStorage = userStorage;
     }
 
-    public void clear() {
-        inMemoryFilmStorage.clear();
-    }
-
     public HashMap<Integer, Film> getFilms() {
         return inMemoryFilmStorage.getFilms();
     }
