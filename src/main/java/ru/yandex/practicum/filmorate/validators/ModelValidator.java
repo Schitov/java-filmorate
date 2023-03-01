@@ -33,7 +33,7 @@ public class ModelValidator implements Validator {
             userValidate(user);
         }
     }
-    
+
     public void filmValidate(Film film) {
         if (film.getName() == null || film.getName().trim().length() == 0) {
             throw new ValidException("Name of film is empty");

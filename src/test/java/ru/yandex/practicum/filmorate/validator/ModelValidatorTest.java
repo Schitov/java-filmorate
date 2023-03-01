@@ -111,7 +111,7 @@ class ModelValidatorTest {
         userController.addUser(user1);
 
         Throwable throwable = assertThrows(ExistenceOfObjectException.class, () -> userController.updateUser(user2));
-        assertEquals("User with number2 is not existed", throwable.getMessage());
+        assertEquals("Object with number 2 is not existed", throwable.getMessage());
     }
 
     @Test
