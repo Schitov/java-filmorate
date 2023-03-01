@@ -5,64 +5,25 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
-public class FilmStorage implements InMemoryFilmStorage {
-    private int id = 0;
-    HashMap<Integer, Film> films = new HashMap<>();
+public interface FilmStorage {
 
-    @Override
-    public HashMap<Integer, Film> getFilms() {
-        return films;
-    }
+    HashMap<Integer, Film> getFilms();
 
-    @Override
-    public void addFilm(Film film) {
-        film.setId(generatorId());
-        films.put(film.getId(), film);
-    }
+    void addFilm(Film film);
 
-    @Override
-    public void updateFilm(Film film) {
-        films.replace(film.getId(), film);
-    }
+    void updateFilm(Film film);
 
-    @Override
-    public Film getFilmById(Optional<Integer> id) {
-        return films.get(id.get());
-    }
+    int generatorId();
 
-    @Override
-    public Set<Long> likeFilm(Optional<Integer> idFilm, Optional<Long> idUser) {
-        films.get(idFilm.get()).addLike(idUser.get());
-        return films.get(idFilm.get()).getLikes();
-    }
+    public Film getFilmById(int id);
 
-    @Override
-    public Set<Long> removeLikeFromFilm(Optional<Integer> idFilm, Optional<Long> idUser) {
-        films.get(idFilm.get()).removeLike(idUser.get());
-        return films.get(idFilm.get()).getLikes();
-    }
+    public Set<Long> likeFilm(int idFilm, int idUser);
 
-    @Override
-    public List<Film> showFilteredTopFilms(int count) {
-        if (films.values() == null) {
-            return null;
-        }
-        return films.values()
-                .stream()
-                .sorted((o1, o2) -> o2.countOfLikes() - o1.countOfLikes())
-                .limit(count)
-                .collect(Collectors.toList());
+    public Set<Long> removeLikeFromFilm(int idFilm, int idUser);
 
-    }
+    public List<Film> showFilteredTopFilms(int count);
 
-    @Override
-    public int generatorId() {
-        id = id + 1;
-        return id;
-    }
 }

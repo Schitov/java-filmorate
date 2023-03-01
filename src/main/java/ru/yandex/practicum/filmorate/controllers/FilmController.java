@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -35,19 +34,19 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public Film getFilmById(@PathVariable("id") Optional<Integer> filmId) {
+    public Film getFilmById(@PathVariable("id") int filmId) {
         return filmService.getFilmById(filmId);
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public Set<Long> likeFilm(@PathVariable("id") Optional<Integer> filmId,
-                              @PathVariable Optional<Long> userId) {
+    public Set<Long> likeFilm(@PathVariable("id") int filmId,
+                              @PathVariable int userId) {
         return filmService.likeFilm(filmId, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public Set<Long> deleteLikeFromFilm(@PathVariable("id") Optional<Integer> filmId,
-                                        @PathVariable Optional<Long> userId) {
+    public Set<Long> deleteLikeFromFilm(@PathVariable("id") int filmId,
+                                        @PathVariable int userId) {
         return filmService.removeLikeFilm(filmId, userId);
     }
 

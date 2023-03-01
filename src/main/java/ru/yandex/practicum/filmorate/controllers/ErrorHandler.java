@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.yandex.practicum.filmorate.exceptions.ExistenceOfObject;
+import ru.yandex.practicum.filmorate.exceptions.ExistenceOfObjectException;
 import ru.yandex.practicum.filmorate.exceptions.ValidException;
 import ru.yandex.practicum.filmorate.util.ErrorResponse;
 
@@ -21,7 +21,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleExistenceOfObjects(final ExistenceOfObject e) {
+    public ErrorResponse handleExistenceOfObjects(final ExistenceOfObjectException e) {
         return new ErrorResponse(
                 "Existence error", e.getMessage()
         );

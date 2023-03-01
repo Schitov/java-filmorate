@@ -29,16 +29,16 @@ public class User {
     private LocalDate birthday;
     private Set<Long> friends;
 
-    public void addFriend(Long id) {
+    public void addFriend(int id) {
         if (friends == null) {
-            friends = new HashSet<Long>();
-            friends.add(id);
+            friends = new HashSet<>();
+            friends.add(Long.valueOf(id));
             return;
         }
-        friends.add(id);
+        friends.add(Long.valueOf(id));
     }
 
-    public void deleteFriend(Long id) {
+    public void deleteFriend(int id) {
         if (friends == null) {
             return;
         } else friends.remove(id);

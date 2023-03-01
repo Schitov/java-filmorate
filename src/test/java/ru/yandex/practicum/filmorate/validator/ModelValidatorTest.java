@@ -10,7 +10,7 @@ import ru.yandex.practicum.filmorate.controllers.UserController;
 import ru.yandex.practicum.filmorate.exceptions.ValidException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.exceptions.ExistenceOfObject;
+import ru.yandex.practicum.filmorate.exceptions.ExistenceOfObjectException;
 
 import java.time.LocalDate;
 
@@ -110,7 +110,7 @@ class ModelValidatorTest {
 
         userController.addUser(user1);
 
-        Throwable throwable = assertThrows(ExistenceOfObject.class, () -> userController.updateUser(user2));
+        Throwable throwable = assertThrows(ExistenceOfObjectException.class, () -> userController.updateUser(user2));
         assertEquals("User with number2 is not existed", throwable.getMessage());
     }
 

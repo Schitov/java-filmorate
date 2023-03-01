@@ -38,13 +38,13 @@ public class Film {
         return likes.size();
     }
 
-    public void addLike(Long idUser) {
+    public void addLike(int idUser) {
         if (likes == null) {
-            likes = new HashSet<Long>();
-            likes.add(idUser);
+            likes = new HashSet<>();
+            likes.add(Long.valueOf(idUser));
             return;
         }
-        likes.add(idUser);
+        likes.add(Long.valueOf(idUser));
     }
 
     public void removeLike(Long idUser) {

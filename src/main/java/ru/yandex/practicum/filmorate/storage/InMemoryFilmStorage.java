@@ -5,26 +5,59 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
-public interface InMemoryFilmStorage {
+public class InMemoryFilmStorage implements FilmStorage {
+    private int id = 0;
+    HashMap<Integer, Film> films = new HashMap<>();
 
-    HashMap<Integer, Film> getFilms();
+    @Override
+    public HashMap<Integer, Film> getFilms() {
+        return films;
+    }
 
-    void addFilm(Film film);
+    @Override
+    public void addFilm(Film film) {
+        film.setId(generatorId());
+        films.put(film.getId(), film);
+    }
 
-    void updateFilm(Film film);
+    @Override
+    public void updateFilm(Film film) {
+        films.replace(film.getId(), film);
+    }
 
-    int generatorId();
+    @Override
+    public Film getFilmById(int id) {
+        return films.get(id);
+    }
 
-    public Film getFilmById(Optional<Integer> id);
+    @Override
+    public Set<Long> likeFilm(int idFilm, int idUser) {
+        films.get(idFilm).addLike(idUser);
+        return films.get(idFilm).getLikes();
+    }
 
-    public Set<Long> likeFilm(Optional<Integer> idFilm, Optional<Long> idUser);
+    @Override
+    public Set<Long> removeLikeFromFilm(int idFilm, int idUser) {
+        films.get(idFilm).removeLike(Long.valueOf(idUser));
+        return films.get(idFilm).getLikes();
+    }
 
-    public Set<Long> removeLikeFromFilm(Optional<Integer> idFilm, Optional<Long> idUser);
+    @Override
+    public List<Film> showFilteredTopFilms(int count) {
+        return films.values()
+                .stream()
+                .sorted((o1, o2) -> o2.countOfLikes() - o1.countOfLikes())
+                .limit(count)
+                .collect(Collectors.toList());
 
-    public List<Film> showFilteredTopFilms(int count);
+    }
 
+    @Override
+    public int generatorId() {
+        return ++id;
+    }
 }
