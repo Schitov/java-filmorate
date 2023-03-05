@@ -6,10 +6,11 @@ There are 6 tables are presented on the image below:
 2. Film - film data
 3. Like - likes attached to movies by users
 4. Friendship - friendship status between users
-5. Genre - genre of films
+5. Genre - genre of films (dict)
 6. Rating - rating of the Association of Film Companies (MPA)
+7. Genre_Film - intermediate table for joining film and genre tables (as rel is many to may)
 
-![This is an image](https://github.com/Schitov/java-filmorate/blob/main/Filmorate_DB_%20Diagramma.png)
+![This is an image](https://github.com/Schitov/java-filmorate/blob/main/Filmorate_DB_%20Diagramma.png.png)
 
 Queries to select main data:
 1. TOP 10 films by count of likes
