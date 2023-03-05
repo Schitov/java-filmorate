@@ -1,7 +1,7 @@
 # java-filmorate
 Template repository for Filmorate project.
 
-There are 6 tables are presented on the image below:
+There are 7 tables are presented on the image below:
 1. User- user data
 2. Film - film data
 3. Like - likes attached to movies by users
