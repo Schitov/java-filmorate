@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.validators;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import ru.yandex.practicum.filmorate.exceptions.ExistenceOfObjectException;
 import ru.yandex.practicum.filmorate.exceptions.ValidException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
@@ -33,14 +34,6 @@ public class ModelValidator implements Validator {
         }
     }
 
-    public void presentFilmValidate(Object o, HashMap<Integer, Film> films) {
-        Film film = (Film) o;
-
-        if (!films.containsKey(film.getId())) {
-            throw new ValidException("Film is not existed in our library");
-        }
-    }
-
     public void filmValidate(Film film) {
         if (film.getName() == null || film.getName().trim().length() == 0) {
             throw new ValidException("Name of film is empty");
@@ -68,11 +61,9 @@ public class ModelValidator implements Validator {
         }
     }
 
-    public void presentUserValidate(Object o, HashMap<Integer, User> users) {
-        User user = (User) o;
-        if (!users.containsKey(user.getId())) {
-            throw new ValidException("User with number is not existed");
+    public void objectPresenceValidate(int id, HashMap<Integer, ?> objects) {
+        if (!objects.containsKey(id)) {
+            throw new ExistenceOfObjectException("Object with number " + id + " is not existed");
         }
     }
-
 }

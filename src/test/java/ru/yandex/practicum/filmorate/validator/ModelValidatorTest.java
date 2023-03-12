@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.validator;
 
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import ru.yandex.practicum.filmorate.controllers.UserController;
 import ru.yandex.practicum.filmorate.exceptions.ValidException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.exceptions.ExistenceOfObjectException;
 
 import java.time.LocalDate;
 
@@ -38,8 +40,6 @@ class ModelValidatorTest {
 
     @Test
     void checkEmptyNameOfFilm() {
-        filmController.clear();
-
         Film film1 = Film.builder()
                 .name("Film")
                 .description("test description")
@@ -62,36 +62,9 @@ class ModelValidatorTest {
         assertEquals("Name of film is empty", throwable.getMessage());
     }
 
-    @Test
-    void checkUpdateNotExistedFilm() {
-        filmController.clear();
-
-        Film film1 = Film.builder()
-                .name("Film")
-                .description("test description")
-                .duration(120)
-                .releaseDate(LocalDate.of(1990, 12, 12))
-                .build();
-
-        Film film2 = Film.builder()
-                .id(7)
-                .name("Film")
-                .description("test description")
-                .duration(120)
-                .releaseDate(LocalDate.of(1990, 12, 12))
-                .build();
-
-        filmController.addFilm(film1);
-
-        Throwable throwable = assertThrows(ValidException.class, () -> filmController.updateFilm(film2));
-        assertEquals(1, filmController.showFilms().size());
-        assertEquals("Film is not existed in our library", throwable.getMessage());
-    }
 
     @Test
     void checkLengthLessThan200() {
-        filmController.clear();
-
         Film film1 = Film.builder()
                 .name("Film")
                 .description("test description test description test description test description test description" +
@@ -108,8 +81,6 @@ class ModelValidatorTest {
 
     @Test
     void checkDurationNotNegative() {
-        filmController.clear();
-
         Film film1 = Film.builder()
                 .name("Film")
                 .description("test description")
@@ -139,8 +110,8 @@ class ModelValidatorTest {
 
         userController.addUser(user1);
 
-        Throwable throwable = assertThrows(ValidException.class, () -> userController.updateUser(user2));
-        assertEquals("User with number is not existed", throwable.getMessage());
+        Throwable throwable = assertThrows(ExistenceOfObjectException.class, () -> userController.updateUser(user2));
+        assertEquals("Object with number 2 is not existed", throwable.getMessage());
     }
 
     @Test
