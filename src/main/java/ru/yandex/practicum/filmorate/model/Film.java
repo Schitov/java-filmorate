@@ -19,7 +19,7 @@ import java.util.Set;
 @ToString
 @SuperBuilder
 public class Film {
-    int id;
+    long id;
     @NotNull(message = "Name must be filled")
     @NotBlank(message = "Name must be filled")
     private String name;
@@ -30,6 +30,14 @@ public class Film {
     private long duration;
     private Set<Long> likes;
 
+    public Film(long filmId, String name, String description, LocalDate releaseDate, long duration) {
+        this.id = filmId;
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+    }
+
     public int countOfLikes() {
         if (likes == null) {
             likes = new HashSet<>();
@@ -38,7 +46,7 @@ public class Film {
         return likes.size();
     }
 
-    public void addLike(int idUser) {
+    public void addLike(long idUser) {
         if (likes == null) {
             likes = new HashSet<>();
             likes.add(Long.valueOf(idUser));

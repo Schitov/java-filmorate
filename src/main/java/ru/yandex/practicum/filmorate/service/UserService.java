@@ -4,11 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
+import ru.yandex.practicum.filmorate.dao.UserDBStorage;
 import ru.yandex.practicum.filmorate.exceptions.ExistenceOfObjectException;
 import ru.yandex.practicum.filmorate.exceptions.ValidException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
-import ru.yandex.practicum.filmorate.storage.ImMemoryUserStorage;
+//import ru.yandex.practicum.filmorate.storage.ImMemoryUserStorage;
 import ru.yandex.practicum.filmorate.validators.ModelValidator;
 
 import java.util.Collection;
@@ -23,7 +24,7 @@ public class UserService {
     private ModelValidator userValidator;
 
     @Autowired
-    public UserService(ImMemoryUserStorage userStorage) {
+    public UserService(UserDBStorage userStorage) {
         this.inMemoryUserStorage = userStorage;
     }
 
@@ -31,7 +32,7 @@ public class UserService {
         return inMemoryUserStorage.showUsers();
     }
 
-    public User getUser(int id) {
+    public User getUser(long id) {
         if (checkPresenceAndPositiveOfValue(id)) {
             userValidator.objectPresenceValidate(id, inMemoryUserStorage.getUsers());
             return inMemoryUserStorage.getUser(id);
@@ -52,7 +53,7 @@ public class UserService {
         inMemoryUserStorage.updateUser(user);
     }
 
-    public Set<Long> addFriend(int idUser, int idFriend) {
+    public Set<Long> addFriend(long idUser, long idFriend) {
         if (checkPresenceAndPositiveOfValues(idUser, idFriend)) {
             userValidator.objectPresenceValidate(idUser, inMemoryUserStorage.getUsers());
             userValidator.objectPresenceValidate(idFriend, inMemoryUserStorage.getUsers());
@@ -61,7 +62,7 @@ public class UserService {
         throw new ExistenceOfObjectException("idFilm or idUser must be more than 0");
     }
 
-    public Set<Long> deleteFriend(int idUser, int idFriend) {
+    public Set<Long> deleteFriend(long idUser, long idFriend) {
         if (checkPresenceAndPositiveOfValues(idUser, idFriend)) {
             userValidator.objectPresenceValidate(idUser, inMemoryUserStorage.getUsers());
             userValidator.objectPresenceValidate(idFriend, inMemoryUserStorage.getUsers());
@@ -70,7 +71,7 @@ public class UserService {
         throw new ValidException("idFilm or idUser must be more than 0");
     }
 
-    public List<User> getFriends(int userId) {
+    public List<User> getFriends(long userId) {
         if (checkPresenceAndPositiveOfValue(userId)) {
             userValidator.objectPresenceValidate(userId, inMemoryUserStorage.getUsers());
             return inMemoryUserStorage.showFriends(userId);
@@ -78,7 +79,7 @@ public class UserService {
         throw new ValidException("idUser must be more than 0");
     }
 
-    public List<User> showCommonFriends(int idUser, int otherId) {
+    public List<User> showCommonFriends(long idUser, long otherId) {
         if (checkPresenceAndPositiveOfValues(idUser, otherId)) {
             userValidator.objectPresenceValidate(idUser, inMemoryUserStorage.getUsers());
             userValidator.objectPresenceValidate(otherId, inMemoryUserStorage.getUsers());
@@ -87,14 +88,14 @@ public class UserService {
         throw new ValidException("id of user must be more than 0");
     }
 
-    public boolean checkPresenceAndPositiveOfValues(int idUser, int idFilm) {
+    public boolean checkPresenceAndPositiveOfValues(long idUser, long idFilm) {
         if (idUser >= 0 & idFilm >= 0) {
             return true;
         }
         return false;
     }
 
-    public boolean checkPresenceAndPositiveOfValue(int id) {
+    public boolean checkPresenceAndPositiveOfValue(long id) {
         if (id >= 0) {
             return true;
         }

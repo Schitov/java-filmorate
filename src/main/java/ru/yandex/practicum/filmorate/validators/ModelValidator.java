@@ -17,9 +17,7 @@ public class ModelValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> aClass) {
-        if (Film.class.equals(aClass))
-            return Film.class.equals(aClass);
-        return User.class.equals(aClass);
+        return Film.class.equals(aClass) || User.class.equals(aClass);
     }
 
     @Override
@@ -61,7 +59,7 @@ public class ModelValidator implements Validator {
         }
     }
 
-    public void objectPresenceValidate(int id, HashMap<Integer, ?> objects) {
+    public void objectPresenceValidate(long id, HashMap<Long, ?> objects) {
         if (!objects.containsKey(id)) {
             throw new ExistenceOfObjectException("Object with number " + id + " is not existed");
         }

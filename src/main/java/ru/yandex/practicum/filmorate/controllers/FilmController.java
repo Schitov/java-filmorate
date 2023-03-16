@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -22,10 +21,10 @@ public class FilmController {
         return film;
     }
 
-    @GetMapping()
-    public Collection<Film> showFilms() {
-        return filmService.getFilms().values();
-    }
+//    @GetMapping()
+//    public Collection<Film> showFilms() {
+//        return filmService.getFilms().values();
+//    }
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
@@ -34,19 +33,29 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public Film getFilmById(@PathVariable("id") int filmId) {
+    public Film getFilmById(@PathVariable("id") long filmId) {
         return filmService.getFilmById(filmId);
     }
 
+//    @GetMapping("/sql/{id}")
+//    public Film getFilmByIdSQL(@PathVariable("id") long filmId) {
+//        return filmService.getFilmByIdSQL(filmId);
+//    }
+
+    @GetMapping()
+    public List<Film> showFilms() {
+        return filmService.getFilms();
+    }
+
     @PutMapping("/{id}/like/{userId}")
-    public Set<Long> likeFilm(@PathVariable("id") int filmId,
-                              @PathVariable int userId) {
+    public Set<Long> likeFilm(@PathVariable("id") long filmId,
+                              @PathVariable long userId) {
         return filmService.likeFilm(filmId, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public Set<Long> deleteLikeFromFilm(@PathVariable("id") int filmId,
-                                        @PathVariable int userId) {
+    public Set<Long> deleteLikeFromFilm(@PathVariable("id") long filmId,
+                                        @PathVariable long userId) {
         return filmService.removeLikeFilm(filmId, userId);
     }
 

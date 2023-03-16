@@ -1,33 +1,34 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.dao;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class ImMemoryUserStorage implements UserStorage {
+public class UserDBStorage implements UserStorage {
 
-    HashMap<Integer, User> users = new HashMap<>();
-    private int id = 0;
+    HashMap<Long, User> users = new HashMap<>();
+    private long id = 0;
 
     @Override
-    public User getUser(int id) {
+    public User getUser(long id) {
         return users.get(id);
     }
 
     @Override
-    public Set<Long> addFriend(int idUser, int idFriend) {
+    public Set<Long> addFriend(long idUser, long idFriend) {
         users.get(idUser).addFriend(idFriend);
         users.get(idFriend).addFriend(idUser);
         return users.get(idUser).getFriends();
     }
 
     @Override
-    public Set<Long> deleteFriend(int idUser, int idFriend) {
+    public Set<Long> deleteFriend(long idUser, long idFriend) {
         users.get(idUser).deleteFriend(idFriend);
         return users.get(idUser).getFriends();
     }
@@ -53,16 +54,16 @@ public class ImMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public List<User> showFriends(int idUser) {
+    public List<User> showFriends(long idUser) {
         return users.get(idUser)
                 .getFriends()
                 .stream()
-                .map(id -> users.get(id.intValue()))
+                .map(id -> users.get(id))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<User> showCommonFriends(int userId, int otherId) {
+    public List<User> showCommonFriends(long userId, long otherId) {
         List<User> commonFriends = new ArrayList<>();
 
         Set<Long> friendOfUser = users.get(userId).getFriends();
@@ -85,13 +86,13 @@ public class ImMemoryUserStorage implements UserStorage {
             log.info(friendOfOtherUser.toString());
             for (Long id : friendOfUser) {
                 if (friendOfOtherUser.contains(id)) {
-                    commonFriends.add(users.get(id.intValue()));
+                    commonFriends.add(users.get(id));
                 }
             }
         } else {
             for (Long id : friendOfOtherUser) {
                 if (friendOfUser.contains(id)) {
-                    commonFriends.add(users.get(id.intValue()));
+                    commonFriends.add(users.get(id));
                 }
             }
         }
@@ -100,11 +101,11 @@ public class ImMemoryUserStorage implements UserStorage {
 
     @Override
     public int generatorId() {
-        return ++id;
+        return (int) ++id;
     }
 
     @Override
-    public HashMap<Integer, User> getUsers() {
+    public HashMap<Long, User> getUsers() {
         return users;
     }
 }
