@@ -34,7 +34,7 @@ public class Genre {
         }
         Genre genre = (Genre) o;
 
-        return Objects.equals(genre.getId(),this.getId());
+        return Objects.equals(genre.getId(), this.getId());
     }
 
 }

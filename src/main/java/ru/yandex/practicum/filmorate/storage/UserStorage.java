@@ -13,8 +13,6 @@ public interface UserStorage {
 
     User updateUser(User user);
 
-    int generatorId();
-
     public User getUser(long id);
 
     public int addFriend(long idUser, long idFriend);
@@ -24,5 +22,6 @@ public interface UserStorage {
     public List<User> showFriends(long idUser);
 
     public List<User> showCommonFriends(long userId, long otherId);
+
     public List<Long> getIds();
 }

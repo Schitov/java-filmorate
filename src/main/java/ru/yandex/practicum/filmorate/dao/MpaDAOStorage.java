@@ -13,28 +13,25 @@ public class MpaDAOStorage implements MPAStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public MpaDAOStorage(JdbcTemplate jdbcTemplate){
-        this.jdbcTemplate=jdbcTemplate;
+    public MpaDAOStorage(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
     public List<MPA> getMpas() {
         String sql = "select * from Rating_MPA";
         return jdbcTemplate.query(sql, new MpaRowMapper());
-    };
+    }
 
     @Override
     public MPA getMpaById(int id) {
         String sql = "select * from Rating_MPA where Rating_ID = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, new MpaRowMapper());
-    };
+    }
 
     @Override
     public List<Long> getIds() {
         String sql = "Select Rating_ID from Rating_MPA";
         return jdbcTemplate.queryForList(sql, Long.class);
     }
-//    public void getMpaById() {
-//        return ;
-//    };
 }

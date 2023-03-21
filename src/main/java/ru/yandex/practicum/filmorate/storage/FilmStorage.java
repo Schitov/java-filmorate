@@ -24,9 +24,9 @@ public interface FilmStorage {
     public List<Film> showFilteredTopFilms(int count);
 
     public void addGenreToFilm(long idFilm, long idGenre);
+
     public Film getFilmByIdWithGenres(long id, List<Genre> genres);
+
     public void updateGenreOfFilm(long idFilm, long idGenre);
-//    public Film getFilmByIdSQL(long id);
-//    public List<Film> getFilmsByIdSQL();
 
 }

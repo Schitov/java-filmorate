@@ -10,15 +10,11 @@ import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
 @Component
 public class FilmDBStorage implements FilmStorage {
-    private long id = 0;
-    HashMap<Long, Film> films = new HashMap<>();
-
     private final JdbcTemplate jdbcTemplate;
     private final GenreDAOStorage genreStorage;
 
@@ -248,17 +244,6 @@ public class FilmDBStorage implements FilmStorage {
                     updateGenreOfFilm(id, genre.getId());
                     ids.add(genre.getId());
                 }
-            }
-        }
-    }
-
-    public void updateGenres(List<Genre> genres, long id) {
-        if (genres.isEmpty() & !genreStorage.getGenresOfFilm((int) id).isEmpty()) {
-            removeGenres(id);
-        } else {
-            for (Genre genre : genres) {
-                log.info(String.valueOf(genre));
-                addGenreToFilm(id, genre.getId());
             }
         }
     }

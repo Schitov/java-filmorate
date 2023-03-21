@@ -16,12 +16,12 @@ public class FilmRowMapper implements RowMapper<Film> {
 
     List<Genre> genres;
 
-    public FilmRowMapper() {};
+    public FilmRowMapper() {
+    }
 
     public FilmRowMapper(List<Genre> genres) {
         this.genres = genres;
-    };
-
+    }
 
     @Override
     public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -34,13 +34,9 @@ public class FilmRowMapper implements RowMapper<Film> {
         int rate = rs.getInt("RATE");
         long likes = rs.getLong("LIKES_AMOUNT");
         Film film = new Film(filmId, name, description, releaseDate, duration, ratingMPA, rate);
-        if(genres != null) {
+        if (genres != null) {
             film.setGenres(genres);
         }
-
-//        List<Genre> genres = rs.getArray();
-        log.info(rs.getString("Rating_MPA"));
-
         return film;
     }
 }

@@ -15,14 +15,16 @@ public class GenreDAOStorage implements GenreStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public GenreDAOStorage(JdbcTemplate jdbcTemplate){
-        this.jdbcTemplate=jdbcTemplate;
+    public GenreDAOStorage(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     public List<Genre> getGenres() {
         String sql = "select * from genre";
         return jdbcTemplate.query(sql, new GenreRowMapper());
-    };
+    }
+
+    ;
 
     public Genre getGenreById(int id) {
         String sql = "select * from genre where genreID = ?";

@@ -14,12 +14,10 @@ import java.util.List;
 @Component
 public class UserDBStorage implements UserStorage {
 
-    private long id = 0;
-
     private final JdbcTemplate jdbcTemplate;
 
-    public UserDBStorage(JdbcTemplate jdbcTemplate){
-        this.jdbcTemplate=jdbcTemplate;
+    public UserDBStorage(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
@@ -30,7 +28,7 @@ public class UserDBStorage implements UserStorage {
 
     @Override
     public int addFriend(long idUser, long idFriend) {
-        String sql ="INSERT INTO FRIENDSHIP " +
+        String sql = "INSERT INTO FRIENDSHIP " +
                 "(Friend_ID, " +
                 " User_ID) " +
                 "VALUES (?, ?)";
@@ -49,7 +47,7 @@ public class UserDBStorage implements UserStorage {
 
     @Override
     public User addUser(User user) {
-        String sql ="INSERT INTO USERS (" +
+        String sql = "INSERT INTO USERS (" +
                 "EMAIL, " +
                 "LOGIN, " +
                 "NAME, " +
@@ -115,13 +113,13 @@ public class UserDBStorage implements UserStorage {
     @Override
     public List<User> showCommonFriends(long userId, long otherId) {
         String sql = "SELECT *\n" +
-                    "FROM USERS\n" +
-                    "WHERE USERS.USER_ID IN \n" +
-                    "(SELECT FRIEND_ID\n" +
-                    "FROM FRIENDSHIP \n" +
-                    "WHERE FRIENDSHIP.USER_ID = ? AND FRIENDSHIP.FRIEND_ID  IN (SELECT  f.FRIEND_ID \n" +
-                    "FROM FRIENDSHIP f \n" +
-                    "WHERE f.USER_ID = ?))";
+                "FROM USERS\n" +
+                "WHERE USERS.USER_ID IN \n" +
+                "(SELECT FRIEND_ID\n" +
+                "FROM FRIENDSHIP \n" +
+                "WHERE FRIENDSHIP.USER_ID = ? AND FRIENDSHIP.FRIEND_ID  IN (SELECT  f.FRIEND_ID \n" +
+                "FROM FRIENDSHIP f \n" +
+                "WHERE f.USER_ID = ?))";
 
         return jdbcTemplate.query(sql, new Object[]{userId, otherId}, new UserRowMapper());
 
@@ -132,8 +130,4 @@ public class UserDBStorage implements UserStorage {
         return jdbcTemplate.queryForList(sql, Long.class);
     }
 
-    @Override
-    public int generatorId() {
-        return (int) ++id;
-    }
 }
