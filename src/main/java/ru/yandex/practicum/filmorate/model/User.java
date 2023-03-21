@@ -17,7 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @ToString
 public class User {
-    int id;
+    long id;
     @Email
     private String email;
     @NotNull
@@ -29,7 +29,15 @@ public class User {
     private LocalDate birthday;
     private Set<Long> friends;
 
-    public void addFriend(int id) {
+    public User(long id, String email, String login, String name, LocalDate birthday) {
+        this.id = id;
+        this.email = email;
+        this.login = login;
+        this.name = name;
+        this.birthday = birthday;
+    }
+
+    public void addFriend(long id) {
         if (friends == null) {
             friends = new HashSet<>();
             friends.add(Long.valueOf(id));
@@ -38,7 +46,7 @@ public class User {
         friends.add(Long.valueOf(id));
     }
 
-    public void deleteFriend(int id) {
+    public void deleteFriend(long id) {
         if (friends == null) {
             return;
         } else friends.remove(id);

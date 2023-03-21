@@ -13,17 +13,15 @@ public interface UserStorage {
 
     User updateUser(User user);
 
-    int generatorId();
+    public User getUser(long id);
 
-    public User getUser(int id);
+    public int addFriend(long idUser, long idFriend);
 
-    public Set<Long> addFriend(int idUser, int idFriend);
+    public int deleteFriend(long idUser, long idFriend);
 
-    public Set<Long> deleteFriend(int idUser, int idFriend);
+    public List<User> showFriends(long idUser);
 
-    public List<User> showFriends(int idUser);
+    public List<User> showCommonFriends(long userId, long otherId);
 
-    public List<User> showCommonFriends(int userId, int otherId);
-
-    public HashMap<Integer, User> getUsers();
+    public List<Long> getIds();
 }
