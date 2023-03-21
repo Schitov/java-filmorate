@@ -15,7 +15,6 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.validators.ModelValidator;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Slf4j
@@ -39,22 +38,23 @@ public class FilmService {
         return filmStorage.getFilms();
     }
 
-    public void addFilm(Film film) {
+    public Film addFilm(Film film) {
         Errors errors = new BeanPropertyBindingResult(film, "film");
         filmValidator.validate(film, errors);
-        filmStorage.addFilm(film);
+        return filmStorage.addFilm(film);
     }
 
-    public void updateFilm(Film film) {
+    public Film updateFilm(Film film) {
         Errors errors = new BeanPropertyBindingResult(film, "film");
         filmValidator.validate(film, errors);
+        filmValidator.objectPresenceValidate(film.getId(), filmDBStorage.getIds());
 //        filmValidator.objectPresenceValidate(film.getId(), filmStorage.getFilms());
-        filmStorage.updateFilm(film);
+        return filmStorage.updateFilm(film);
     }
 
     public Film getFilmById(long id) {
         if (checkPresenceAndPositiveOfValue(id)) {
-//            filmValidator.objectPresenceValidate(id, filmStorage.getFilms());
+            filmValidator.objectPresenceValidate(id, filmDBStorage.getIds());
             return filmStorage.getFilmById(id);
         }
         throw new ValidException("Id must be more than 0");
@@ -68,7 +68,7 @@ public class FilmService {
 //        return filmDBStorage.getFilmsByIdSQL();
 //    }
 
-    public Set<Long> likeFilm(long idFilm, long idUser) {
+    public int likeFilm(long idFilm, long idUser) {
         if (checkPresenceAndPositiveOfValues(idFilm, idUser)) {
 //            filmValidator.objectPresenceValidate(idFilm, filmStorage.getFilms());
 //            filmValidator.objectPresenceValidate(idUser, inMemoryUserStorage.getUsers());
@@ -77,7 +77,7 @@ public class FilmService {
         throw new ValidException("idFilm or idUser must be more 0");
     }
 
-    public Set<Long> removeLikeFilm(long idFilm, long idUser) {
+    public int removeLikeFilm(long idFilm, long idUser) {
         if (checkPresenceAndPositiveOfValues(idFilm, idUser)) {
 //            filmValidator.objectPresenceValidate(idFilm, filmStorage.getFilms());
 //            filmValidator.objectPresenceValidate(idUser, inMemoryUserStorage.getUsers());

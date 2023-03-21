@@ -4,7 +4,9 @@ drop table if exists MPA cascade;
 drop table if exists LIKES cascade;
 drop table if exists USERS cascade;
 drop table if exists FILM_GENRE cascade;
+drop table if exists GENRE_FILM cascade;
 drop table if exists FRIENDSHIP cascade;
+drop table if exists RATING_MPA cascade;
 
 create table IF NOT EXISTS GENRE
 (
@@ -29,7 +31,7 @@ create table IF NOT EXISTS FILM
     DESCRIPTION  CHARACTER VARYING(200),
     RELEASE_DATE DATE,
     DURATION     INTEGER,
-    Rating_MPA          BIGINT,
+    Rating_MPA         BIGINT,
     RATE         INTEGER,
     LIKES_AMOUNT INTEGER,
     constraint FILM_PK
@@ -40,18 +42,12 @@ create table IF NOT EXISTS FILM
 );
 
 
-create table IF NOT EXISTS GENRE_FILM
-(
-    FILM_ID  BIGINT not null,
-    GENRE_ID INTEGER not null,
-    constraint FILM_GENRE_PK
-        primary key (FILM_ID, GENRE_ID),
-    constraint FILM_FK
-        foreign key (FILM_ID) references FILM
-            on update cascade on delete cascade,
-    constraint GENRE_FK
-        foreign key (GENRE_ID) references GENRE
-            on update cascade on delete cascade
+CREATE TABLE PUBLIC.GENRE_FILM (
+	FILM_ID BIGINT NOT NULL,
+	GENRE_ID BIGINT NOT NULL,
+	CONSTRAINT GENRE_FILM_PK PRIMARY KEY (FILM_ID,GENRE_ID),
+	CONSTRAINT GENRE_FILM_FK FOREIGN KEY (GENRE_ID) REFERENCES PUBLIC.GENRE(GENREID),
+	CONSTRAINT GENRE_FILM_FK_1 FOREIGN KEY (FILM_ID) REFERENCES PUBLIC.FILM(FILM_ID)
 );
 
 create table IF NOT EXISTS USERS

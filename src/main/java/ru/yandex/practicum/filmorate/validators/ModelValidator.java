@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.validators;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -10,7 +11,9 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 
+@Slf4j
 @Component
 public class ModelValidator implements Validator {
     private final static LocalDate BIRTHDAY_OF_FILMS = LocalDate.of(1895, 12, 28);
@@ -61,6 +64,14 @@ public class ModelValidator implements Validator {
 
     public void objectPresenceValidate(long id, HashMap<Long, ?> objects) {
         if (!objects.containsKey(id)) {
+            throw new ExistenceOfObjectException("Object with number " + id + " is not existed");
+        }
+    }
+
+    public void objectPresenceValidate(long id, List<Long> objects) {
+        log.info("ID of object for update: " + id);
+        log.info("List of objects from DB: " + objects);
+        if (!objects.contains(id)) {
             throw new ExistenceOfObjectException("Object with number " + id + " is not existed");
         }
     }

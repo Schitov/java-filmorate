@@ -2,28 +2,30 @@ package ru.yandex.practicum.filmorate.storage;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.List;
-import java.util.Set;
 
 @Component
 public interface FilmStorage {
 
     List<Film> getFilms();
 
-    void addFilm(Film film);
+    Film addFilm(Film film);
 
-    void updateFilm(Film film);
-
-    int generatorId();
+    Film updateFilm(Film film);
 
     public Film getFilmById(long id);
 
-    public Set<Long> likeFilm(long idFilm, long idUser);
+    public int likeFilm(long idFilm, long idUser);
 
-    public Set<Long> removeLikeFromFilm(long idFilm, long idUser);
+    public int removeLikeFromFilm(long idFilm, long idUser);
 
     public List<Film> showFilteredTopFilms(int count);
+
+    public void addGenreToFilm(long idFilm, long idGenre);
+    public Film getFilmByIdWithGenres(long id, List<Genre> genres);
+    public void updateGenreOfFilm(long idFilm, long idGenre);
 //    public Film getFilmByIdSQL(long id);
 //    public List<Film> getFilmsByIdSQL();
 

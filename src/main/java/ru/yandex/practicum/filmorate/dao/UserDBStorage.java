@@ -1,111 +1,139 @@
 package ru.yandex.practicum.filmorate.dao;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.mappers.UserRowMapper;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @Component
 public class UserDBStorage implements UserStorage {
 
-    HashMap<Long, User> users = new HashMap<>();
     private long id = 0;
+
+    private final JdbcTemplate jdbcTemplate;
+
+    public UserDBStorage(JdbcTemplate jdbcTemplate){
+        this.jdbcTemplate=jdbcTemplate;
+    }
 
     @Override
     public User getUser(long id) {
-        return users.get(id);
+        String sql = "select * from users where User_ID = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, new UserRowMapper());
     }
 
     @Override
-    public Set<Long> addFriend(long idUser, long idFriend) {
-        users.get(idUser).addFriend(idFriend);
-        users.get(idFriend).addFriend(idUser);
-        return users.get(idUser).getFriends();
+    public int addFriend(long idUser, long idFriend) {
+        String sql ="INSERT INTO FRIENDSHIP " +
+                "(Friend_ID, " +
+                " User_ID) " +
+                "VALUES (?, ?)";
+
+        return jdbcTemplate.update(
+                sql,
+                idFriend,
+                idUser);
     }
 
     @Override
-    public Set<Long> deleteFriend(long idUser, long idFriend) {
-        users.get(idUser).deleteFriend(idFriend);
-        return users.get(idUser).getFriends();
+    public int deleteFriend(long idUser, long idFriend) {
+        String sql = "DELETE FROM FRIENDSHIP WHERE User_ID = ? AND Friend_ID = ?";
+        return jdbcTemplate.update(sql, idUser, idFriend);
     }
 
     @Override
     public User addUser(User user) {
-        user.setId(generatorId());
-        user.setName(user.getName() == null || user.getName().isBlank() ? user.getLogin() : user.getName());
-        users.put(user.getId(), user);
-        return user;
+        String sql ="INSERT INTO USERS (" +
+                "EMAIL, " +
+                "LOGIN, " +
+                "NAME, " +
+                "BIRTHDAY) " +
+                "VALUES (?, ?, ?, ?)";
+
+        jdbcTemplate.update(
+                sql,
+                user.getEmail(),
+                user.getLogin(),
+                user.getName(),
+                user.getBirthday());
+
+        String sqlOut = "select * from users order by User_ID desc limit 1";
+        return jdbcTemplate.queryForObject(sqlOut, new UserRowMapper());
     }
 
     @Override
     public User updateUser(User user) {
-        user.setName(user.getName() == null || user.getName().isBlank() ? user.getLogin() : user.getName());
-        users.replace(user.getId(), user);
+        String sql = "UPDATE USERS " +
+                "SET EMAIL = ?," +
+                "LOGIN = ?," +
+                "NAME = ?," +
+                "BIRTHDAY = ?" +
+                "WHERE User_ID = ?";
+
+        jdbcTemplate.update(sql,
+                user.getEmail(),
+                user.getLogin(),
+                user.getName(),
+                user.getBirthday(),
+                user.getId());
         return user;
     }
 
     @Override
     public Collection<User> showUsers() {
-        return users.values();
+        String sql = "select * from users";
+
+        List<User> users = jdbcTemplate.query(
+                sql,
+                new UserRowMapper());
+        return users;
     }
 
     @Override
     public List<User> showFriends(long idUser) {
-        return users.get(idUser)
-                .getFriends()
-                .stream()
-                .map(id -> users.get(id))
-                .collect(Collectors.toList());
+        log.info(String.valueOf(idUser));
+        String sql = "SELECT *\n" +
+                "FROM USERS\n" +
+                "WHERE USERS.USER_ID in\n" +
+                "(SELECT FRIENDSHIP.FRIEND_ID \n" +
+                "FROM FRIENDSHIP \n" +
+                "WHERE FRIENDSHIP.USER_ID = ?)";
+
+        List<User> users = jdbcTemplate.query(sql, new Object[]{idUser}, new UserRowMapper());
+
+        log.info("Common friends: " + users);
+
+        return users;
     }
 
     @Override
     public List<User> showCommonFriends(long userId, long otherId) {
-        List<User> commonFriends = new ArrayList<>();
+        String sql = "SELECT *\n" +
+                    "FROM USERS\n" +
+                    "WHERE USERS.USER_ID IN \n" +
+                    "(SELECT FRIEND_ID\n" +
+                    "FROM FRIENDSHIP \n" +
+                    "WHERE FRIENDSHIP.USER_ID = ? AND FRIENDSHIP.FRIEND_ID  IN (SELECT  f.FRIEND_ID \n" +
+                    "FROM FRIENDSHIP f \n" +
+                    "WHERE f.USER_ID = ?))";
 
-        Set<Long> friendOfUser = users.get(userId).getFriends();
-        Set<Long> friendOfOtherUser = users.get(otherId).getFriends();
+        return jdbcTemplate.query(sql, new Object[]{userId, otherId}, new UserRowMapper());
 
-        log.info(friendOfUser.toString());
-        log.info(friendOfOtherUser.toString());
+    }
 
-        int countFriendsOfUser = friendOfUser.size();
-        if (countFriendsOfUser == 0) {
-            return new ArrayList<>();
-        }
-
-        int countFriendsOfOtherUser = friendOfOtherUser.size();
-
-        if (countFriendsOfUser < countFriendsOfOtherUser) {
-            log.info(String.valueOf(countFriendsOfUser));
-            log.info(friendOfUser.toString());
-            log.info(String.valueOf(countFriendsOfOtherUser));
-            log.info(friendOfOtherUser.toString());
-            for (Long id : friendOfUser) {
-                if (friendOfOtherUser.contains(id)) {
-                    commonFriends.add(users.get(id));
-                }
-            }
-        } else {
-            for (Long id : friendOfOtherUser) {
-                if (friendOfUser.contains(id)) {
-                    commonFriends.add(users.get(id));
-                }
-            }
-        }
-        return commonFriends;
+    public List<Long> getIds() {
+        String sql = "select User_ID from users";
+        return jdbcTemplate.queryForList(sql, Long.class);
     }
 
     @Override
     public int generatorId() {
         return (int) ++id;
-    }
-
-    @Override
-    public HashMap<Long, User> getUsers() {
-        return users;
     }
 }
