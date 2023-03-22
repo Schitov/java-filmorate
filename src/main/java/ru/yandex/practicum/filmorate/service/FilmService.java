@@ -1,22 +1,20 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
-import ru.yandex.practicum.filmorate.dao.FilmDBStorage;
-import ru.yandex.practicum.filmorate.dao.UserDBStorage;
+import ru.yandex.practicum.filmorate.dao.UserStorage;
+import ru.yandex.practicum.filmorate.dao.impl.FilmDBStorage;
+import ru.yandex.practicum.filmorate.dao.impl.UserDBStorage;
 import ru.yandex.practicum.filmorate.exceptions.ExistenceOfObjectException;
 import ru.yandex.practicum.filmorate.exceptions.ValidException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.validators.ModelValidator;
 
 import java.util.List;
 
 @Service
-@Slf4j
 public class FilmService {
 
     UserStorage inMemoryUserStorage;
@@ -71,7 +69,7 @@ public class FilmService {
     }
 
     public List<Film> showSortedFilms(int count) {
-        if (filmDBStorage.getFilms().size() == 0) {
+        if (filmDBStorage.getFilmsToCheckExistence().size() == 0) {
             throw new ValidException("No films are saved");
         }
         if (count > 0) {
@@ -81,17 +79,11 @@ public class FilmService {
     }
 
     public boolean checkPresenceAndPositiveOfValues(long idFilm, long idUser) {
-        if (idFilm > 0 & idUser > 0) {
-            return true;
-        }
-        return false;
+        return idFilm > 0 & idUser > 0;
     }
 
     public boolean checkPresenceAndPositiveOfValue(long id) {
-        if (id >= 0) {
-            return true;
-        }
-        return false;
+        return id >= 0;
     }
 
 

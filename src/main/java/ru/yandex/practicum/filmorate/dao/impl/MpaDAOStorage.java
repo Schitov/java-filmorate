@@ -1,14 +1,14 @@
-package ru.yandex.practicum.filmorate.dao;
+package ru.yandex.practicum.filmorate.dao.impl;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.mappers.MpaRowMapper;
 import ru.yandex.practicum.filmorate.model.MPA;
-import ru.yandex.practicum.filmorate.storage.MPAStorage;
+import ru.yandex.practicum.filmorate.dao.MPAStorage;
 
 import java.util.List;
 
-@Component
+@Repository
 public class MpaDAOStorage implements MPAStorage {
 
     private final JdbcTemplate jdbcTemplate;
@@ -26,7 +26,7 @@ public class MpaDAOStorage implements MPAStorage {
     @Override
     public MPA getMpaById(int id) {
         String sql = "select * from Rating_MPA where Rating_ID = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{id}, new MpaRowMapper());
+        return jdbcTemplate.queryForObject(sql, new MpaRowMapper(), id);
     }
 
     @Override

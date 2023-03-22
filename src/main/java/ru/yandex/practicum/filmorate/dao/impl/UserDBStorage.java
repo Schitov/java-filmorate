@@ -1,17 +1,17 @@
-package ru.yandex.practicum.filmorate.dao;
+package ru.yandex.practicum.filmorate.dao.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.mappers.UserRowMapper;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.dao.UserStorage;
 
 import java.util.Collection;
 import java.util.List;
 
 @Slf4j
-@Component
+@Repository
 public class UserDBStorage implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
@@ -23,7 +23,7 @@ public class UserDBStorage implements UserStorage {
     @Override
     public User getUser(long id) {
         String sql = "select * from users where User_ID = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{id}, new UserRowMapper());
+        return jdbcTemplate.queryForObject(sql, new UserRowMapper(), id);
     }
 
     @Override
@@ -87,15 +87,13 @@ public class UserDBStorage implements UserStorage {
     public Collection<User> showUsers() {
         String sql = "select * from users";
 
-        List<User> users = jdbcTemplate.query(
+        return jdbcTemplate.query(
                 sql,
                 new UserRowMapper());
-        return users;
     }
 
     @Override
     public List<User> showFriends(long idUser) {
-        log.info(String.valueOf(idUser));
         String sql = "SELECT *\n" +
                 "FROM USERS\n" +
                 "WHERE USERS.USER_ID in\n" +
@@ -103,9 +101,9 @@ public class UserDBStorage implements UserStorage {
                 "FROM FRIENDSHIP \n" +
                 "WHERE FRIENDSHIP.USER_ID = ?)";
 
-        List<User> users = jdbcTemplate.query(sql, new Object[]{idUser}, new UserRowMapper());
+        List<User> users = jdbcTemplate.query(sql, new UserRowMapper(), idUser);
 
-        log.info("Common friends: " + users);
+        log.info("Common friends: {}", users);
 
         return users;
     }
@@ -121,7 +119,7 @@ public class UserDBStorage implements UserStorage {
                 "FROM FRIENDSHIP f \n" +
                 "WHERE f.USER_ID = ?))";
 
-        return jdbcTemplate.query(sql, new Object[]{userId, otherId}, new UserRowMapper());
+        return jdbcTemplate.query(sql, new UserRowMapper(), userId, otherId);
 
     }
 

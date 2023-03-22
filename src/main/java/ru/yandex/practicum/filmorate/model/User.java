@@ -40,10 +40,10 @@ public class User {
     public void addFriend(long id) {
         if (friends == null) {
             friends = new HashSet<>();
-            friends.add(Long.valueOf(id));
+            friends.add(id);
             return;
         }
-        friends.add(Long.valueOf(id));
+        friends.add(id);
     }
 
     public void deleteFriend(long id) {

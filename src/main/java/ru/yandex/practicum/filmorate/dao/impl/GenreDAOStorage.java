@@ -1,16 +1,16 @@
-package ru.yandex.practicum.filmorate.dao;
+package ru.yandex.practicum.filmorate.dao.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.mappers.GenreRowMapper;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.storage.GenreStorage;
+import ru.yandex.practicum.filmorate.dao.GenreStorage;
 
 import java.util.List;
 
 @Slf4j
-@Component
+@Repository
 public class GenreDAOStorage implements GenreStorage {
 
     private final JdbcTemplate jdbcTemplate;
@@ -24,11 +24,9 @@ public class GenreDAOStorage implements GenreStorage {
         return jdbcTemplate.query(sql, new GenreRowMapper());
     }
 
-    ;
-
     public Genre getGenreById(int id) {
         String sql = "select * from genre where genreID = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{id}, new GenreRowMapper());
+        return jdbcTemplate.queryForObject(sql, new GenreRowMapper(), id);
     }
 
     public List<Genre> getGenresOfFilm(int id) {
@@ -39,11 +37,9 @@ public class GenreDAOStorage implements GenreStorage {
                 "FROM GENRE_FILM\n" +
                 "WHERE GENRE_FILM.FILM_ID = ?)";
 
-        log.info(String.valueOf(id));
+        List<Genre> genres = jdbcTemplate.query(sql, new GenreRowMapper(), id);
 
-        List<Genre> genres = jdbcTemplate.query(sql, new Object[]{id}, new GenreRowMapper());
-
-        log.info("Genres: " + genres);
+        log.info("Genres: {}", genres);
 
         return genres;
     }

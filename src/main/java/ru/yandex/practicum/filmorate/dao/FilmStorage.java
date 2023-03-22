@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.dao;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -28,5 +28,6 @@ public interface FilmStorage {
     public Film getFilmByIdWithGenres(long id, List<Genre> genres);
 
     public void updateGenreOfFilm(long idFilm, long idGenre);
+    public List<Film> getFilmsToCheckExistence();
 
 }

@@ -25,7 +25,6 @@ public class ModelValidator implements Validator {
 
     @Override
     public void validate(Object o, Errors errors) {
-        System.out.println(errors);
         if (o.getClass() == Film.class) {
             Film film = (Film) o;
             filmValidate(film);
@@ -69,8 +68,8 @@ public class ModelValidator implements Validator {
     }
 
     public void objectPresenceValidate(long id, List<Long> objects) {
-        log.info("ID of object for update: " + id);
-        log.info("List of objects from DB: " + objects);
+        log.info("ID of object for update: {}", id);
+        log.info("List of objects from DB: {}", objects);
         if (!objects.contains(id)) {
             throw new ExistenceOfObjectException("Object with number " + id + " is not existed");
         }

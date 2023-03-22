@@ -1,19 +1,19 @@
-package ru.yandex.practicum.filmorate.dao;
+package ru.yandex.practicum.filmorate.dao.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.mappers.FilmRowMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.dao.FilmStorage;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Component
+@Repository
 public class FilmDBStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final GenreDAOStorage genreStorage;
@@ -43,6 +43,26 @@ public class FilmDBStorage implements FilmStorage {
     }
 
     @Override
+    public List<Film> getFilmsToCheckExistence() {
+        String sql = "SELECT *\n" +
+                "FROM film\n" +
+                "INNER JOIN RATING_MPA ON film.RATING_MPA = RATING_MPA.RATING_ID " +
+                "LIMIT 1";
+
+        List<Film> films = jdbcTemplate.query(
+                sql,
+                new FilmRowMapper());
+
+        for (Film film : films) {
+            if (film.getGenres() != null) {
+                film.setGenres(genreStorage.getGenresOfFilm((int) film.getId()));
+            }
+        }
+
+        return films;
+    }
+
+    @Override
     public Film getFilmById(long id) {
         List<Genre> genres = genreStorage.getGenresOfFilm((int) id);
 
@@ -51,15 +71,13 @@ public class FilmDBStorage implements FilmStorage {
                 "INNER JOIN RATING_MPA ON film.RATING_MPA = RATING_MPA.RATING_ID " +
                 "WHERE FILM_ID = ?";
 
-        log.info(String.valueOf(genres));
-
-        return jdbcTemplate.queryForObject(sql, new Object[]{id}, new FilmRowMapper(genres));
+        return jdbcTemplate.queryForObject(sql, new FilmRowMapper(genres), id);
     }
 
     @Override
     public Film getFilmByIdWithGenres(long id, List<Genre> genres) {
 
-        log.info("Genres: " + genres);
+        log.info("Genres: {}", genres);
 
         String sqlFilm = "SELECT *\n" +
                 "FROM FILM\n" +
@@ -104,7 +122,7 @@ public class FilmDBStorage implements FilmStorage {
 
         if (!film.getGenres().isEmpty()) {
 
-            log.info("Genres from film: " + film.getGenres());
+            log.info("Genres from film: {}", film.getGenres());
             updateGenresDuringAdding(film.getGenres(), lastFilm.getId());
             List<Genre> genres = genreStorage.getGenresOfFilm((int) lastFilm.getId());
 
@@ -123,8 +141,6 @@ public class FilmDBStorage implements FilmStorage {
                 "GENRE_ID) " +
                 "VALUES (?, ?)";
 
-        log.info(sql);
-
         jdbcTemplate.update(
                 sql,
                 idFilm,
@@ -133,15 +149,13 @@ public class FilmDBStorage implements FilmStorage {
 
     @Override
     public void updateGenreOfFilm(long idFilm, long idGenre) {
-        log.info("ID of Film: " + idFilm);
-        log.info("ID of Genre: " + idGenre);
+        log.info("ID of Film: {}", idFilm);
+        log.info("ID of Genre: {}", idGenre);
 
         String sql = "INSERT INTO GENRE_FILM " +
                 "(FILM_ID, " +
                 "GENRE_ID) " +
                 "VALUES (?, ?)";
-
-        log.info(sql);
 
         jdbcTemplate.update(
                 sql,
@@ -172,7 +186,6 @@ public class FilmDBStorage implements FilmStorage {
                 film.getLikes(),
                 film.getId());
         if (film.getGenres() != null) {
-            log.info(String.valueOf(film.getGenres()));
             updateGenresDuringAdding(film.getGenres(), film.getId());
         }
 
@@ -205,11 +218,10 @@ public class FilmDBStorage implements FilmStorage {
                 "ORDER BY likes_count DESC \n" +
                 "LIMIT ?";
 
-        List<Film> films = jdbcTemplate.query(
+        return jdbcTemplate.query(
                 sql,
                 new FilmRowMapper(),
                 count);
-        return films;
     }
 
     public List<Long> getIds() {
@@ -226,7 +238,7 @@ public class FilmDBStorage implements FilmStorage {
 
         Film film = jdbcTemplate.queryForObject(sqlOut, new FilmRowMapper());
 
-        log.info("film: " + film);
+        log.info("film: {}", film);
 
         return film;
     }
@@ -237,10 +249,9 @@ public class FilmDBStorage implements FilmStorage {
             removeGenres(id);
         } else {
             removeGenres(id);
-            List<Integer> ids = new ArrayList<Integer>();
+            List<Integer> ids = new ArrayList<>();
             for (Genre genre : genres) {
                 if (!ids.contains(genre.getId())) {
-                    log.info(String.valueOf(genre));
                     updateGenreOfFilm(id, genre.getId());
                     ids.add(genre.getId());
                 }
