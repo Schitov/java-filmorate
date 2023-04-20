@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.yandex.practicum.filmorate.exceptions.ExistenceOfObjectException;
 import ru.yandex.practicum.filmorate.exceptions.ValidException;
-import ru.yandex.practicum.filmorate.util.ErrorResponse;
+import ru.yandex.practicum.filmorate.exceptions.ErrorResponse;
 
 @RestControllerAdvice
-public class ErrorHandler {
+public class ErrorHandlerController {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)

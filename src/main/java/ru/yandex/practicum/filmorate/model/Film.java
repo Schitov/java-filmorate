@@ -10,8 +10,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -19,7 +18,7 @@ import java.util.Set;
 @ToString
 @SuperBuilder
 public class Film {
-    int id;
+    long id;
     @NotNull(message = "Name must be filled")
     @NotBlank(message = "Name must be filled")
     private String name;
@@ -28,26 +27,29 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Duration must be more than 0")
     private long duration;
+    private int rate;
+    private MPA mpa;
+    private List<Genre> genres = new ArrayList<>();
     private Set<Long> likes;
 
-    public int countOfLikes() {
-        if (likes == null) {
-            likes = new HashSet<>();
-            return 0;
-        }
-        return likes.size();
+    public Film(String name, String description,
+                LocalDate releaseDate, long duration, MPA ratingMpa, int rate) {
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.mpa = ratingMpa;
+        this.rate = rate;
     }
 
-    public void addLike(int idUser) {
-        if (likes == null) {
-            likes = new HashSet<>();
-            likes.add(Long.valueOf(idUser));
-            return;
-        }
-        likes.add(Long.valueOf(idUser));
-    }
-
-    public void removeLike(Long idUser) {
-        likes.remove(idUser);
+    public Film(long id, String name, String description,
+                LocalDate releaseDate, long duration, MPA ratingMpa, int rate) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.mpa = ratingMpa;
+        this.rate = rate;
     }
 }
